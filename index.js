@@ -43,11 +43,9 @@ class Canvas{
             rows = 0
             collums++
         }
-        console.log(this.rows);
-        console.log(this.cordsProperties)
-        console.log(this.cord)
-        c.fillStyle = "blue"
-        c.fillRect(311,1,188,185)
+
+        //c.fillStyle = "blue"
+        //c.fillRect(311,1,188,185)
 
     }
 
@@ -65,7 +63,7 @@ class Canvas{
         }
         if(unrender === true){
             this.BlockPos = []
-            console.log('bruh')
+            
         }
         //render functions
         let AddY = (numofrun, remember) => {
@@ -276,6 +274,24 @@ class Canvas{
         }
 
     }
+
+    RefreshCanvas = () => {
+        let cordlen = this.cord.length
+        let i = 0
+        while(i != cordlen){
+            let pos = this.cord[i]
+            pos = pos.split(' ')
+            let posX = pos[0]
+            let posY = pos[1]
+            let c = this.canvas.getContext('2d')
+            c.fillStyle = 'gray'
+            c.fillRect(posX,posY,30,30)
+            i++
+            
+        }
+        this.BlockPos = []
+    }
+
     NextBlock = () => {
         let c = this.canvas.getContext('2d')
         let randomNum = Math.floor(Math.random() * this.blocks.length )
@@ -297,12 +313,14 @@ class Game{
     constructor(){
         this.speed = 400
         this.movement = "null"
+        this.x = 156
+        this.y = 156
         
     }
 
 
     Update = async () =>{
-        console.log("yay")
+        console.log(canvas.cord)
         const delay = ms => new Promise(res => setTimeout(res, ms));
         let gameStarted = true
         let x = 156
@@ -314,13 +332,15 @@ class Game{
         
         while(gameStarted === true){
             await delay (this.speed)
+            
+            canvas.RefreshCanvas()
             if (spawn = true){
-                canvas.Render(canvas.nextblock, x,preY,"r2", true)
+                
+                
                 canvas.Render(canvas.nextblock, x,y, "r2", false)
                 spawn =false
             }
-            console.log(canvas.BlockPos)
-            console.log(x,y)
+            
             let len = canvas.BlockPos.length
             let i = 0
             let checkList = []
@@ -350,44 +370,53 @@ class Game{
                 checkList.push(canvas.cord.includes(NextblockposY[i]))
                 i++
             }
-            console.log(NextblockposY)
+            
             if(checkList.includes(false) != true){
 
-                if(this.movement === "right"){
-                    canvas.Render(canvas.nextblock, preX,preY,"r2", true)
-                    canvas.Render(canvas.nextblock, x,y,"r2", false)
-                    preY = y
-                    preX = x
-                    y = y+31
-                    x = x+31
-                }
-                else if (this.movement === "left") {
-                    canvas.Render(canvas.nextblock, preX,preY,"r2", true)
-                    canvas.Render(canvas.nextblock, x,y,"r2", false)
-                    preY = y
-                    preX = x
-                    y = y+31
-                    x = x-31
-                }
-                else{
-                    canvas.Render(canvas.nextblock, x,preY,"r2", true)
-                    canvas.Render(canvas.nextblock, x,y,"r2", false)
-                    preY = y
-                    preX = x
-                    y= y+31
-                    x=x
-                }
+                
+                    
+                canvas.RefreshCanvas()
+                canvas.Render(canvas.nextblock, x,y,"r2", false)
+                console.log(canvas.BlockPos)
+                preY = y
+                preX = x
+                y= y+31
+                x=x
+                this.movement = "null"
+                this.x = x
+                this.y = y
+                    
+                
 
-                console.log("moved")
+
+                
             }
             if(checkList.includes(false) === true){
+                console.log(canvas.BlockPos)
+
                 x = 156
                 y = 156
                 preY = y-31
                 spawn = true
+                
+                let z = canvas.BlockPos.length
+                let v = 0
+                let removecords = []
+                let add = 0
+                console.log(canvas.BlockPos)
+                while(v != z){
+                    let numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
+                    removecords.push(numberofcord)
+                    console.log(numberofcord)
+                    canvas.cord.splice(numberofcord+add, 1)
+                    if (add === 0){
+                        add = 1
+                    }
+                    v++
+                }
+                console.log(canvas.cord)
+                //canvas.BlockPos = ["156 156"]
                 canvas.NextBlock()
-                
-                
                 i = 0
 
             }
@@ -401,8 +430,23 @@ class Game{
 
         }
     }
+    MoveLeft(){
+        canvas.Render(canvas.nextblock, this.x, this.y-31, true )
+        canvas.Render(canvas.nextblock, this.x-31, this.y, false )
+
+    }
 
 }
-
 const game = new Game()
 game.Update()
+document.addEventListener("keydown", function(event){
+    if(event.keyCode == 37){
+        console.log('a')
+        game.MoveLeft()
+    }
+    else if(event.keyCode == 39){
+        game.movement = "right"
+        console.log('b')
+    }
+})
+
