@@ -41,7 +41,7 @@ class Canvas{
             y=y+31
             x=1
             rows = 0
-            collums++
+            collums++ 
         }
 
         //c.fillStyle = "blue"
@@ -50,7 +50,7 @@ class Canvas{
     }
 
 
-    Render = (block, x, y, orientation, unrender) =>  {
+    Render = (block, x, y, orientation) =>  {
         var c = this.canvas.getContext('2d')
         var check = 0
         var tempY = y
@@ -58,13 +58,8 @@ class Canvas{
         let orgX = x
         let orgY = y
 
-        if(unrender === false){
-            this.BlockPos.push(`${x} ${y}`)
-        }
-        if(unrender === true){
-            this.BlockPos = []
-            
-        }
+        this.BlockPos.push(`${x} ${y}`)
+        
         //render functions
         let AddY = (numofrun, remember) => {
             while(check != numofrun){
@@ -74,9 +69,7 @@ class Canvas{
                 }
                 c.fillRect(x,tempY,30,30)
                 check++
-                if(unrender === false){
-                    this.BlockPos.push(`${x} ${tempY}`)
-                }
+                this.BlockPos.push(`${x} ${tempY}`)
             }
             tempY = y
             check = 0
@@ -89,9 +82,8 @@ class Canvas{
                 }
                 c.fillRect(tempX,y,30,30)
                 check++
-                if(unrender === false){
-                    this.BlockPos.push(`${tempX} ${y}`)
-                }
+                this.BlockPos.push(`${tempX} ${y}`)
+                
             }
             tempX = x
             check = 0
@@ -104,9 +96,7 @@ class Canvas{
                 }
                 c.fillRect(tempX,y,30,30)
                 check++
-                if(unrender === false){
-                    this.BlockPos.push(`${tempX} ${y}`)
-                }
+                this.BlockPos.push(`${tempX} ${y}`)
             }
             tempX = x
             check = 0
@@ -119,9 +109,7 @@ class Canvas{
                 }
                 c.fillRect(x,tempY,30,30)
                 check++
-                if(unrender === false){
-                    this.BlockPos.push(`${x} ${tempY}`)
-                }
+                this.BlockPos.push(`${x} ${tempY}`)
             }
             tempY = y
             check = 0
@@ -131,9 +119,6 @@ class Canvas{
         //block render instructions
         if (block === "line"){
             c.fillStyle = "lightblue"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             
             if (orientation === "r2" || orientation === "r4"){
@@ -147,9 +132,6 @@ class Canvas{
         }
         else if(block === "box"){
             c.fillStyle = "green"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             MinusY(1,true)
             AddX(1,true)
@@ -157,9 +139,6 @@ class Canvas{
         }
         else if(block === "L1"){
             c.fillStyle = "red"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             if (orientation === "r1"){
                 AddX(1, false)
@@ -185,9 +164,6 @@ class Canvas{
         }
         else if(block === "L2"){
             c.fillStyle = "Purple"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             if (orientation === "r1"){
                 MinusX(1, false)
@@ -213,9 +189,6 @@ class Canvas{
         }
         else if(block === "Z1"){
             c.fillStyle = "Yellow"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             if (orientation === "r1" || orientation === "r3"){
                 AddX(1,false)
@@ -230,9 +203,6 @@ class Canvas{
         }
         else if(block === "Z2"){
             c.fillStyle = "Lightgreen"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             if (orientation === "r1" || orientation === "r3") {
                 MinusX(1,false)
@@ -247,9 +217,6 @@ class Canvas{
         }
         else if(block === "T"){
             c.fillStyle = "Orange"
-            if (unrender === true){
-                c.fillStyle = "gray"
-            }
             c.fillRect(x,y,30,30)
             if (orientation === "r1"){
                 AddY(1,false)
@@ -299,7 +266,7 @@ class Canvas{
         console.log(this.nextblock)
         let x = 373
         let y = 94
-        this.Render(this.nextblock, x, y, "r2", "null")
+        //this.Render(this.nextblock, x, y, "r2", "null")
 
     }
 }
@@ -402,16 +369,14 @@ class Game{
                 let z = canvas.BlockPos.length
                 let v = 0
                 let removecords = []
-                let add = 0
                 console.log(canvas.BlockPos)
                 while(v != z){
                     let numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
                     removecords.push(numberofcord)
                     console.log(numberofcord)
-                    canvas.cord.splice(numberofcord+add, 1)
-                    if (add === 0){
-                        add = 1
-                    }
+                    canvas.cord.splice(numberofcord, 1)
+                    console.log(canvas.cord)
+
                     v++
                 }
                 console.log(canvas.cord)
@@ -430,23 +395,23 @@ class Game{
 
         }
     }
-    MoveLeft(){
-        canvas.Render(canvas.nextblock, this.x, this.y-31, true )
-        canvas.Render(canvas.nextblock, this.x-31, this.y, false )
+    // MoveLeft(){
+    //     canvas.Render(canvas.nextblock, this.x, this.y-31, true )
+    //     canvas.Render(canvas.nextblock, this.x-31, this.y, false )
 
-    }
+    // }
 
 }
 const game = new Game()
 game.Update()
-document.addEventListener("keydown", function(event){
-    if(event.keyCode == 37){
-        console.log('a')
-        game.MoveLeft()
-    }
-    else if(event.keyCode == 39){
-        game.movement = "right"
-        console.log('b')
-    }
-})
+// document.addEventListener("keydown", function(event){
+//     if(event.keyCode == 37){
+//         console.log('a')
+//         game.MoveLeft()
+//     }
+//     else if(event.keyCode == 39){
+//         game.movement = "right"
+//         console.log('b')
+//     }
+// })
 
