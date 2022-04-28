@@ -7,6 +7,8 @@ class Canvas{
        this.blocks = ["line", "box", "L1", "L2", "T", 'Z1', "Z2"]
        this.nextblock = nextblock
        this.BlockPos = []
+       this.ypos = []
+       this.blockYpos = []
     }
     drawCanvas = () => {
         this.canvas.width = 497
@@ -31,6 +33,8 @@ class Canvas{
                     isFull: false
                 }
                 this.cord.push(`${x} ${y}`)
+                this.ypos.push(`${y}`)
+                
                 x = x+31
                 rows++
             }
@@ -59,6 +63,7 @@ class Canvas{
         let orgY = y
 
         this.BlockPos.push(`${x} ${y}`)
+        this.blockYpos.push(`${y}`)
         
         //render functions
         let AddY = (numofrun, remember) => {
@@ -70,6 +75,7 @@ class Canvas{
                 c.fillRect(x,tempY,30,30)
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
+                this.blockYpos.push(`${tempY}`)
             }
             tempY = y
             check = 0
@@ -83,6 +89,7 @@ class Canvas{
                 c.fillRect(tempX,y,30,30)
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
+                this.blockYpos.push(`${y}`)
                 
             }
             tempX = x
@@ -97,6 +104,7 @@ class Canvas{
                 c.fillRect(tempX,y,30,30)
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
+                this.blockYpos.push(`${y}`)
             }
             tempX = x
             check = 0
@@ -110,6 +118,7 @@ class Canvas{
                 c.fillRect(x,tempY,30,30)
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
+                this.blockYpos.push(`${tempY}`)
             }
             tempY = y
             check = 0
@@ -257,6 +266,7 @@ class Canvas{
             
         }
         this.BlockPos = []
+        this.blockYpos = []
     }
 
     NextBlock = () => {
@@ -286,14 +296,14 @@ class Game{
     }
 
 
-    Update = async () =>{
-        console.log(canvas.cord)
+    Update = async (block) =>{
+        console.log(canvas.ypos)
         const delay = ms => new Promise(res => setTimeout(res, ms));
         let gameStarted = true
         let x = 156
         let y = 156
         let spawn = false
-        canvas.Render(canvas.nextblock, x,y,"r2", false)
+        canvas.Render(block, x,y,"r2", false)
         let preY = y-31
         let preX = x-31
         
@@ -304,7 +314,7 @@ class Game{
             if (spawn = true){
                 
                 
-                canvas.Render(canvas.nextblock, x,y, "r2", false)
+                canvas.Render(block, x,y, "r2")
                 spawn =false
             }
             
@@ -324,7 +334,7 @@ class Game{
                 nexty = Number(nexty) + 31 
                 Nextblockpos.push(`${nextx} ${nexty}`)
                 NextblockposX.push(`${nextx} ${y}`)
-                NextblockposY.push(`${x} ${nexty}`)
+                NextblockposY.push(`${nexty}`)
                 
                 i++
             }
@@ -334,17 +344,18 @@ class Game{
             i = 0
             while(i != len){
                 
-                checkList.push(canvas.cord.includes(NextblockposY[i]))
+                checkList.push(canvas.ypos.includes(NextblockposY[i]))
                 i++
             }
+            console.log(`Check List: ${checkList}`)
+            console.log(`Next Y Pos: ${NextblockposY}`)
             
             if(checkList.includes(false) != true){
 
                 
-                    
                 canvas.RefreshCanvas()
-                canvas.Render(canvas.nextblock, x,y,"r2", false)
-                console.log(canvas.BlockPos)
+                canvas.Render(block, x,y,"r2")
+                console.log(canvas.blockYpos)
                 preY = y
                 preX = x
                 y= y+31
@@ -352,37 +363,45 @@ class Game{
                 this.movement = "null"
                 this.x = x
                 this.y = y
-                    
+                console.log(checkList.includes(false))
                 
 
 
                 
             }
             if(checkList.includes(false) === true){
-                console.log(canvas.BlockPos)
-
+                console.log("----------------------------------")
+                //console.log(canvas.BlockPos)
+                console.log(canvas.blockYpos)
                 x = 156
                 y = 156
                 preY = y-31
                 spawn = true
                 
-                let z = canvas.BlockPos.length
+                let z = canvas.blockYpos.length
                 let v = 0
                 let removecords = []
-                console.log(canvas.BlockPos)
+                console.log(` test  ${canvas.blockYpos}`)
                 while(v != z){
-                    let numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
+                    let numberofcord = canvas.ypos.indexOf(canvas.blockYpos[v])
                     removecords.push(numberofcord)
-                    console.log(numberofcord)
+                    //console.log(canvas.cord[numberofcord])
+                    //console.log(numberofcord)
+                    canvas.ypos.splice(numberofcord, 1)
+                    numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
                     canvas.cord.splice(numberofcord, 1)
-                    console.log(canvas.cord)
+                    
+                    //console.log(canvas.cord)
+                    console.log(canvas.ypos)
 
                     v++
                 }
-                console.log(canvas.cord)
+                gameStarted=false
+                //console.log(canvas.cord)
                 //canvas.BlockPos = ["156 156"]
                 canvas.NextBlock()
                 i = 0
+                
 
             }
 
@@ -403,7 +422,16 @@ class Game{
 
 }
 const game = new Game()
-game.Update()
+console.log(canvas.blockYpos)
+game.Update("Z1")
+const d = ms => new Promise(res => setTimeout(res, ms));
+
+let test  = async () => { 
+    await d(10000)
+    game .Update("L2")
+}
+test()
+
 // document.addEventListener("keydown", function(event){
 //     if(event.keyCode == 37){
 //         console.log('a')
