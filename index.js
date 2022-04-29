@@ -5,14 +5,14 @@ class Canvas{
        this.cordsProperties = {}
        this.cord = []
        this.blocks = ["line", "box", "L1", "L2", "T", 'Z1', "Z2"]
-       this.nextblock = nextblock
+       this.nextblock = ''
+       this.currentblock = ''
        this.BlockPos = []
-       this.ypos = []
-       this.blockYpos = []
+       this.NextblockposY = []
     }
     drawCanvas = () => {
-        this.canvas.width = 497
-        this.canvas.height = 622
+        this.canvas.width = 1000//497
+        this.canvas.height = 1000//622
         let c = this.canvas.getContext('2d')
         c.fillStyle = "gray"
         let rows = 0
@@ -33,10 +33,12 @@ class Canvas{
                     isFull: false
                 }
                 this.cord.push(`${x} ${y}`)
-                this.ypos.push(`${y}`)
-                
+                c.fillStyle  = 'white'
+                c.fillText(`${x},${y}`,x,y+31)
+                c.fillStyle = 'gray'
                 x = x+31
                 rows++
+                
             }
             let name = `row${rownum}`
             this.rows[name] = cords
@@ -48,8 +50,7 @@ class Canvas{
             collums++ 
         }
 
-        //c.fillStyle = "blue"
-        //c.fillRect(311,1,188,185)
+
 
     }
 
@@ -63,7 +64,7 @@ class Canvas{
         let orgY = y
 
         this.BlockPos.push(`${x} ${y}`)
-        this.blockYpos.push(`${y}`)
+        this.NextblockposY.push(`${x} ${y+31}`)
         
         //render functions
         let AddY = (numofrun, remember) => {
@@ -75,7 +76,9 @@ class Canvas{
                 c.fillRect(x,tempY,30,30)
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
-                this.blockYpos.push(`${tempY}`)
+                this.NextblockposY.push(`${x} ${tempY+31}`)
+
+                
             }
             tempY = y
             check = 0
@@ -89,7 +92,7 @@ class Canvas{
                 c.fillRect(tempX,y,30,30)
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
-                this.blockYpos.push(`${y}`)
+                this.NextblockposY.push(`${tempX} ${y+31}`)
                 
             }
             tempX = x
@@ -104,7 +107,7 @@ class Canvas{
                 c.fillRect(tempX,y,30,30)
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
-                this.blockYpos.push(`${y}`)
+                this.NextblockposY.push(`${tempX} ${y+31}`)
             }
             tempX = x
             check = 0
@@ -118,7 +121,8 @@ class Canvas{
                 c.fillRect(x,tempY,30,30)
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
-                this.blockYpos.push(`${tempY}`)
+                this.NextblockposY.push(`${x} ${tempY+31}`)
+                
             }
             tempY = y
             check = 0
@@ -252,38 +256,93 @@ class Canvas{
     }
 
     RefreshCanvas = () => {
-        let cordlen = this.cord.length
-        let i = 0
-        while(i != cordlen){
-            let pos = this.cord[i]
-            pos = pos.split(' ')
-            let posX = pos[0]
-            let posY = pos[1]
-            let c = this.canvas.getContext('2d')
-            c.fillStyle = 'gray'
-            c.fillRect(posX,posY,30,30)
-            i++
-            
+        let c = this.canvas.getContext('2d')
+        c.fillStyle = "gray"
+        let rows = 0
+        let collums = 0
+        let x = 1
+        let y = 1
+        let numRows = 10
+        let numCollums = 20
+        let cords = []
+        let rownum = 1
+        while(collums != numCollums){
+            while(rows != numRows){
+                
+                
+                if (this.cord.includes(`${x} ${y}`)){
+                    c.fillRect(x,y,30,30)
+                    c.fillStyle  = 'white'
+                    c.fillText(`${x},${y}`,x,y+31)
+                    c.fillStyle = 'gray'
+                }
+                else{
+                    c.fillStyle = "white"
+                    c.fillRect(x,y,30,30)
+                    c.fillStyle = 'gray'
+                }
+
+                x = x+31
+                rows++
+                
+            }
+            let name = `row${rownum}`
+            this.rows[name] = cords
+            cords = []
+            rownum++
+            y=y+31
+            x=1
+            rows = 0
+            collums++ 
         }
         this.BlockPos = []
-        this.blockYpos = []
+        this.NextblockposY = []
     }
 
     NextBlock = () => {
+
         let c = this.canvas.getContext('2d')
+        c.fillStyle = "blue"
+        c.fillRect(311,1,300,300)
+        c.font = "30px Arial"
+        c.fillStyle = "white"
+        c.fillText("Next block", 400, 30)
+        c.font = "10px Arial"
         let randomNum = Math.floor(Math.random() * this.blocks.length )
         this.nextblock = this.blocks[randomNum]
         console.log(this.nextblock)
         let x = 373
         let y = 94
-        //this.Render(this.nextblock, x, y, "r2", "null")
+        this.Render(this.nextblock, x, y, "r2")
 
     }
+    CurrentBlock = () => {
+        let c = this.canvas.getContext('2d')
+        c.fillStyle = "blue"
+        c.fillRect(311,302,300,300)
+        c.fillStyle = "white"
+        c.font = "30px Arial"
+        c.fillText("Current block", 400, 333)
+        c.font = "10px Arial"
+
+        let randomNum = Math.floor(Math.random() * this.blocks.length )
+        
+        console.log(this.currentblock)
+        let x = 373
+        let y = 394
+        this.Render(this.currentblock, x, y, "r2")
+    }
 }
+
 const canvas = new Canvas();
+let randomNum = Math.floor(Math.random() * canvas.blocks.length )
+
+canvas.currentblock =  canvas.blocks[randomNum]
 
 canvas.drawCanvas()
+
 canvas.NextBlock()
+canvas.CurrentBlock()
 
 
 class Game{
@@ -296,18 +355,16 @@ class Game{
     }
 
 
-    Update = async (block) =>{
-        console.log(canvas.ypos)
+    Update = async () =>{
+        let block = canvas.currentblock
         const delay = ms => new Promise(res => setTimeout(res, ms));
         let gameStarted = true
         let x = 156
         let y = 156
         let spawn = false
-        canvas.Render(block, x,y,"r2", false)
-        let preY = y-31
-        let preX = x-31
-        
+        canvas.Render(block, x,y,"r2")
         while(gameStarted === true){
+            block = canvas.currentblock
             await delay (this.speed)
             
             canvas.RefreshCanvas()
@@ -318,128 +375,58 @@ class Game{
                 spawn =false
             }
             
+            let checkList = []
             let len = canvas.BlockPos.length
             let i = 0
-            let checkList = []
-            let NextblockposX = []
-            let NextblockposY = []
-            let Nextblockpos = []
-            
-            
-            while(i != len){
-                let nextxandy = canvas.BlockPos[i].split(' ')
-                let nextx = nextxandy[0]
-                let nexty = nextxandy[1]
-                nextx = Number(nextx) + 31
-                nexty = Number(nexty) + 31 
-                Nextblockpos.push(`${nextx} ${nexty}`)
-                NextblockposX.push(`${nextx} ${y}`)
-                NextblockposY.push(`${nexty}`)
-                
-                i++
-            }
-            
-            
-            
-            i = 0
             while(i != len){
                 
-                checkList.push(canvas.ypos.includes(NextblockposY[i]))
+                checkList.push(canvas.cord.includes(canvas.NextblockposY[i]))
                 i++
             }
-            console.log(`Check List: ${checkList}`)
-            console.log(`Next Y Pos: ${NextblockposY}`)
             
             if(checkList.includes(false) != true){
 
                 
                 canvas.RefreshCanvas()
                 canvas.Render(block, x,y,"r2")
-                console.log(canvas.blockYpos)
-                preY = y
-                preX = x
                 y= y+31
                 x=x
                 this.movement = "null"
                 this.x = x
                 this.y = y
-                console.log(checkList.includes(false))
-                
 
-
+                console.log(`canvas.BlockPos = ${canvas.BlockPos}`)
+                console.log(`Nextblockpos = ${canvas.NextblockposY}`)
                 
             }
             if(checkList.includes(false) === true){
                 console.log("----------------------------------")
-                //console.log(canvas.BlockPos)
-                console.log(canvas.blockYpos)
                 x = 156
                 y = 156
-                preY = y-31
                 spawn = true
                 
-                let z = canvas.blockYpos.length
+                let z = canvas.BlockPos.length
                 let v = 0
                 let removecords = []
-                console.log(` test  ${canvas.blockYpos}`)
+                
                 while(v != z){
-                    let numberofcord = canvas.ypos.indexOf(canvas.blockYpos[v])
+                    let numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
+                    console.log(`numberofcord = ${numberofcord}`)
                     removecords.push(numberofcord)
-                    //console.log(canvas.cord[numberofcord])
-                    //console.log(numberofcord)
-                    canvas.ypos.splice(numberofcord, 1)
-                    numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
+                    console.log(`canvas.cord.splice(${numberofcord}, 1)`)
                     canvas.cord.splice(numberofcord, 1)
-                    
-                    //console.log(canvas.cord)
-                    console.log(canvas.ypos)
 
                     v++
                 }
-                gameStarted=false
-                //console.log(canvas.cord)
-                //canvas.BlockPos = ["156 156"]
+                canvas.currentblock = canvas.nextblock
                 canvas.NextBlock()
+                canvas.CurrentBlock()
                 i = 0
-                
-
             }
-
-
-            
-
-            
-            
-    
-
         }
     }
-    // MoveLeft(){
-    //     canvas.Render(canvas.nextblock, this.x, this.y-31, true )
-    //     canvas.Render(canvas.nextblock, this.x-31, this.y, false )
-
-    // }
 
 }
 const game = new Game()
-console.log(canvas.blockYpos)
-game.Update("Z1")
-const d = ms => new Promise(res => setTimeout(res, ms));
-
-let test  = async () => { 
-    await d(10000)
-    game .Update("L2")
-}
-test()
-
-// document.addEventListener("keydown", function(event){
-//     if(event.keyCode == 37){
-//         console.log('a')
-//         game.MoveLeft()
-//     }
-//     else if(event.keyCode == 39){
-//         game.movement = "right"
-//         console.log('b')
-//     }
-// })
+game.Update()
 
