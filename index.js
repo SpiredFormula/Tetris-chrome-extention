@@ -9,6 +9,8 @@ class Canvas {
         this.currentblock = ''
         this.BlockPos = []
         this.NextblockposY = []
+        this.NextblockposXr = []
+        this.NextblockposXl = []
     }
     drawCanvas = () => {
         this.canvas.width = 1000//497
@@ -65,6 +67,8 @@ class Canvas {
 
         this.BlockPos.push(`${x} ${y}`)
         this.NextblockposY.push(`${x} ${y + 31}`)
+        this.NextblockposXr.push(`${x +31} ${y}`)
+        this.NextblockposXl.push(`${x -31} ${y}`)
 
         //render functions
         let AddY = (numofrun, remember) => {
@@ -77,6 +81,8 @@ class Canvas {
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
                 this.NextblockposY.push(`${x} ${tempY + 31}`)
+                this.NextblockposXr.push(`${x+31} ${tempY}`)
+                this.NextblockposXl.push(`${x-31} ${tempY}`)
 
 
             }
@@ -93,6 +99,8 @@ class Canvas {
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
                 this.NextblockposY.push(`${tempX} ${y + 31}`)
+                this.NextblockposXr.push(`${tempX+31} ${y}`)
+                this.NextblockposXl.push(`${tempX-31} ${y}`)
 
             }
             tempX = x
@@ -108,6 +116,9 @@ class Canvas {
                 check++
                 this.BlockPos.push(`${tempX} ${y}`)
                 this.NextblockposY.push(`${tempX} ${y + 31}`)
+                this.NextblockposXr.push(`${tempX+31} ${y}`)
+                this.NextblockposXl.push(`${tempX-31} ${y}`)
+                
             }
             tempX = x
             check = 0
@@ -122,6 +133,8 @@ class Canvas {
                 check++
                 this.BlockPos.push(`${x} ${tempY}`)
                 this.NextblockposY.push(`${x} ${tempY + 31}`)
+                this.NextblockposXr.push(`${x+31} ${tempY}`)
+                this.NextblockposXl.push(`${x-31} ${tempY}`)
 
             }
             tempY = y
@@ -276,11 +289,7 @@ class Canvas {
                     //c.fillText(`${x},${y}`, x, y + 31)
                     c.fillStyle = 'gray'
                 }
-                else {
-                    c.fillStyle = "white"
-                    c.fillRect(x, y, 30, 30)
-                    c.fillStyle = 'gray'
-                }
+
 
                 x = x + 31
                 rows++
@@ -297,6 +306,8 @@ class Canvas {
         }
         this.BlockPos = []
         this.NextblockposY = []
+        this.NextblockposXl = []
+        this.NextblockposXr = []
     }
 
     NextBlock = () => {
@@ -313,7 +324,7 @@ class Canvas {
         console.log(this.nextblock)
         let x = 373
         let y = 94
-        this.Render(this.nextblock, x, y, "r2")
+        this.Render(this.nextblock, x, y, 'r2')
 
     }
     CurrentBlock = () => {
@@ -330,7 +341,7 @@ class Canvas {
         console.log(this.currentblock)
         let x = 373
         let y = 394
-        this.Render(this.currentblock, x, y, "r2")
+        this.Render(this.currentblock, x, y, 'r2')
     }
 }
 
@@ -339,10 +350,7 @@ let randomNum = Math.floor(Math.random() * canvas.blocks.length)
 
 canvas.currentblock = canvas.blocks[randomNum]
 
-canvas.drawCanvas()
 
-canvas.NextBlock()
-canvas.CurrentBlock()
 
 
 class Game {
@@ -351,26 +359,50 @@ class Game {
 
         this.movement = "null"
         this.x = 156
-        this.y = 156
+        this.y = 32
         this.canmove = true
+        this.rotation = 'r1'
+        this.numR = 1
 
     }
 
     Move = async (direction) => {
-         if (direction === "left") {
+        let len = canvas.BlockPos.length
+        let i = 0
+        let checkListR = []
+        let checkListL = []
+        while (i != len) {
+
+            checkListR.push(canvas.cord.includes(canvas.NextblockposXr[i]))
+            console.log(`Right: ${canvas.NextblockposXr[i]}`)
+            checkListL.push(canvas.cord.includes(canvas.NextblockposXl[i]))
+            console.log(`Left: ${canvas.NextblockposXl[i]}`)
+            i++
+        }
+        console.log(checkListR, checkListL)
+         if (direction === "left" && checkListL.includes(false) != true) {
             console.log("left")
             //canvas.Render(this.currentblock, this.x - 31, this.y, "r2")
             canvas.RefreshCanvas()
-            canvas.Render(canvas.currentblock, this.x-31, this.y, "r2")
+            canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation)
             this.x = this.x - 31
             
 
         }
-        if (direction === "right") {
+        if (direction === "right" && checkListR.includes(false) != true) {
             canvas.RefreshCanvas()
-            canvas.Render(canvas.currentblock, this.x + 31, this.y, "r2")
+            canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation)
             console.log("right")
             this.x = this.x + 31
+        }
+        if(direction === 'r' && checkListR.includes(false) != true && checkListL.includes(false) != true){
+            this.numR = this.numR+1
+            if (this.numR > 4){
+                this.numR = 1
+            }
+            this.rotation = `r${this.numR.toString()}`
+
+
         }
 
     }
@@ -382,7 +414,7 @@ class Game {
         let x = 156
         let y = 156
         let spawn = false
-        canvas.Render(block, this.x, this.y, "r2")
+        canvas.Render(block, this.x, this.y, this.rotation)
         while (gameStarted === true) {
             block = canvas.currentblock
             
@@ -394,7 +426,7 @@ class Game {
             if (spawn = true) {
 
 
-                canvas.Render(block, this.x, this.y, "r2")
+                canvas.Render(block, this.x, this.y, this.rotation)
                 spawn = false
             }
 
@@ -411,7 +443,7 @@ class Game {
 
 
                 canvas.RefreshCanvas()
-                canvas.Render(block, this.x, this.y, "r2")
+                canvas.Render(block, this.x, this.y, this.rotation)
                 this.y = this.y + 31
                 this.x = this.x
 
@@ -422,7 +454,7 @@ class Game {
             if (checkList.includes(false) === true) {
                 console.log("----------------------------------")
                 this.x = 156
-                this.y = 156
+                this.y = 32
                 spawn = true
 
                 let z = canvas.BlockPos.length
@@ -449,6 +481,11 @@ class Game {
 
 }
 const game = new Game()
+game.rotation = 'r1'
+canvas.drawCanvas()
+
+canvas.NextBlock()
+canvas.CurrentBlock()
 
 
 document.addEventListener("keydown", function (event) {
@@ -457,6 +494,9 @@ document.addEventListener("keydown", function (event) {
     }
     else if (event.keyCode === 39 && game.canmove === true) {
         game.Move("right")
+    }
+    else if (event.keyCode === 82 && game.canmove === true) {
+        game.Move("r")
     }
 })
 game.Update()
