@@ -363,39 +363,50 @@ class Game {
         this.canmove = true
         this.rotation = 'r1'
         this.numR = 1
+        this.rembermovements = []
+        this.checkList = []
 
     }
 
     Move = async (direction) => {
+        
         let len = canvas.BlockPos.length
         let i = 0
         let checkListR = []
         let checkListL = []
+        if(this.canmove === false){
+            console.log("NOOOOOOOOOOOOOOOOOOOOO")
+            this.rembermovements.push(direction)
+            console.log(this.rembermovements)
+        }
+        
         while (i != len) {
 
             checkListR.push(canvas.cord.includes(canvas.NextblockposXr[i]))
-            console.log(`Right: ${canvas.NextblockposXr[i]}`)
+            //console.log(`Right: ${canvas.NextblockposXr[i]}`)
             checkListL.push(canvas.cord.includes(canvas.NextblockposXl[i]))
-            console.log(`Left: ${canvas.NextblockposXl[i]}`)
+            //console.log(`Left: ${canvas.NextblockposXl[i]}`)
             i++
         }
-        console.log(checkListR, checkListL)
-         if (direction === "left" && checkListL.includes(false) != true) {
-            console.log("left")
+        //console.log(checkListR, checkListL)
+         if (direction === "left" && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
+            //console.log("left")
             //canvas.Render(this.currentblock, this.x - 31, this.y, "r2")
             canvas.RefreshCanvas()
             canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation)
+            console.log(canvas.BlockPos)
             this.x = this.x - 31
             
 
         }
-        if (direction === "right" && checkListR.includes(false) != true) {
+        else if(direction === "right" && checkListR.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
             canvas.RefreshCanvas()
             canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation)
-            console.log("right")
+            console.log(canvas.BlockPos)
+            //console.log("right")
             this.x = this.x + 31
         }
-        if(direction === 'r' && checkListR.includes(false) != true && checkListL.includes(false) != true){
+        else if(direction === 'r' && checkListR.includes(false) != true && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true){
             this.numR = this.numR+1
             if (this.numR > 4){
                 this.numR = 1
@@ -405,6 +416,7 @@ class Game {
 
         }
 
+        this.canmove = true
     }
 
     Update = async () => {
@@ -418,10 +430,31 @@ class Game {
         while (gameStarted === true) {
             block = canvas.currentblock
             
+            
             this.canmove = true
+            //console.log(this.canmove)
+            //console.log(this.rembermovements)
+            //console.log(this.rembermovements.length)
+            let remlen = this.rembermovements.length
+            if (remlen >= 1 ){
+                let n = this.rembermovements.length
+                let m = 0
+                while(m != n){
+                    //console.log(this.rembermovements)
+                    this.Move(this.rembermovements[0])
+                    this.rembermovements.shift()
+                    
+                    n = this.rembermovements.length
+                    //console.log(n)
+                    
+                }
+            }
+            
+            
             
             await delay(this.speed)
             this.canmove = false
+            //console.log(this.canmove)
             canvas.RefreshCanvas()
             if (spawn = true) {
 
@@ -430,16 +463,16 @@ class Game {
                 spawn = false
             }
 
-            let checkList = []
+            this.checkList = []
             let len = canvas.BlockPos.length
             let i = 0
             while (i != len) {
 
-                checkList.push(canvas.cord.includes(canvas.NextblockposY[i]))
+                this.checkList.push(canvas.cord.includes(canvas.NextblockposY[i]))
                 i++
             }
-
-            if (checkList.includes(false) != true) {
+            console.log(this.checkList, this.checkList.includes(false))
+            if (this.checkList.includes(false) != true) {
 
 
                 canvas.RefreshCanvas()
@@ -447,11 +480,11 @@ class Game {
                 this.y = this.y + 31
                 this.x = this.x
 
-                console.log(`canvas.BlockPos = ${canvas.BlockPos}`)
-                console.log(`Nextblockpos = ${canvas.NextblockposY}`)
+                //console.log(`canvas.BlockPos = ${canvas.BlockPos}`)
+                //console.log(`Nextblockpos = ${canvas.NextblockposY}`)
 
             }
-            if (checkList.includes(false) === true) {
+            if (this.checkList.includes(false) === true) {
                 console.log("----------------------------------")
                 this.x = 156
                 this.y = 32
@@ -463,9 +496,9 @@ class Game {
 
                 while (v != z) {
                     let numberofcord = canvas.cord.indexOf(canvas.BlockPos[v])
-                    console.log(`numberofcord = ${numberofcord}`)
+                    //console.log(`numberofcord = ${numberofcord}`)
                     removecords.push(numberofcord)
-                    console.log(`canvas.cord.splice(${numberofcord}, 1)`)
+                    //console.log(`canvas.cord.splice(${numberofcord}, 1)`)
                     canvas.cord.splice(numberofcord, 1)
 
                     v++
@@ -489,13 +522,13 @@ canvas.CurrentBlock()
 
 
 document.addEventListener("keydown", function (event) {
-    if (event.keyCode === 37 && game.canmove === true) {
+    if (event.keyCode === 37 ) {
         game.Move("left")
     }
-    else if (event.keyCode === 39 && game.canmove === true) {
+    else if (event.keyCode === 39 ) {
         game.Move("right")
     }
-    else if (event.keyCode === 82 && game.canmove === true) {
+    else if (event.keyCode === 82 ) {
         game.Move("r")
     }
 })
