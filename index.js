@@ -289,6 +289,11 @@ class Canvas {
                     c.fillRect(x, y, 30, 30)
                     c.fillStyle = 'gray'
                 }
+                else {
+                 c.fillStyle = 'white'
+                    c.fillRect(x, y, 30, 30)
+                    c.fillStyle = 'gray'
+                }
                 x = x + 31
                 rows++
             }
@@ -313,7 +318,7 @@ class Canvas {
         c.fillStyle = "white"
         c.fillText("Next block", 400, 30)
         c.font = "10px Arial"
-        let randomNum = 0//Math.floor(Math.random() * this.blocks.length)
+        let randomNum = Math.floor(Math.random() * this.blocks.length)
         this.nextblock = this.blocks[randomNum]
         let x = 373
         let y = 94
@@ -334,7 +339,7 @@ class Canvas {
 }
 
 const canvas = new Canvas();
-let randomNum = 0//Math.floor(Math.random() * canvas.blocks.length)
+let randomNum = Math.floor(Math.random() * canvas.blocks.length)
 
 canvas.currentblock = canvas.blocks[randomNum]
 class Game {
@@ -397,6 +402,7 @@ class Game {
         let spawn = false
         canvas.Render(block, this.x, this.y, this.rotation)
         while (gameStarted === true) {
+            console.log(`REMOVED: ${this.removedcords}`)
             block = canvas.currentblock
             this.canmove = true
             let remlen = this.rembermovements.length
@@ -431,6 +437,7 @@ class Game {
                 this.y = this.y + 31
                 this.x = this.x
             }
+            // making blocks stop
             if (this.checkList.includes(false) === true) {
                 this.x = 156
                 this.y = 32
@@ -446,7 +453,7 @@ class Game {
                         isFull: true,
                         row: rowofcord
                     }
-                    this.removedcords.push(canvas.cord[numberofcord])
+                    this.removedcords.push(canvas.BlockPos[v])
                     canvas.cord.splice(numberofcord, 1)
                     v++
                 }
@@ -454,72 +461,112 @@ class Game {
                 canvas.NextBlock()
                 canvas.CurrentBlock()
                 i = 0
-            }
-            let q = canvas.rows.length -1
-            var r2 = 0
-            var rowisfulllist = ['']
-            let check = []
-            while(q >= 0){
-                while(r2 < 10){
-                    rowisfulllist.push(canvas.cordsProperties[canvas.rows[q][r2]].isFull)
-                    r2++
-                }
-                console.log(canvas.rows[q].length)
-                r2 = 0
-                if (rowisfulllist.indexOf(false) === -1 ){
-                    console.log('row cleared')
-                    console.log(rowisfulllist)
-                    let b = 0
-                    let cordpropslen = canvas.rows[q].length
-                    console.log(cordpropslen)
-                    while(b != cordpropslen){
-                        let xandy = canvas.rows[q][b].split(' ')
-                        let x = Number(xandy[0])
-                        let y = Number(xandy[1])
-                        let c = canvas.canvas.getContext('2d')
-                        let upy= y-31
-                        check.push(canvas.cordsProperties[`${x} ${y}`].isFull)
+                // console.log(canvas.rows)
+                // console.log(this.removedcords)
+                // console.log(canvas.cordsProperties)
+
+                let spot = 0
+                let rowArrayLength = canvas.rows.length
+
+                // checks for full row
+                while (spot != rowArrayLength){
+                    let rowBeingChecked = canvas.rows[spot]
+                    console.log(`row${spot+1}: ${rowBeingChecked}`)
+                    let CurrentRowLength = rowBeingChecked.length
+                    let checkingForFill = []
+                    let rowSpot = 0
+                    while(rowSpot != CurrentRowLength){
+                        let pos = rowBeingChecked[rowSpot]
+                        let posIsFull = canvas.cordsProperties[pos].isFull
+                        console.log(`pos${rowSpot+1}: ${pos} IsFull: ${posIsFull}`)
+                        checkingForFill.push(posIsFull)
+                        rowSpot++
+                    }
+                    // If the row is full 
+                    if(checkingForFill.indexOf(false) === -1){
+                        console.log('ROW FULL')
+                       // removes the row
+                        let CurrentRowLength = rowBeingChecked.length
+                        let rowSpot = 0
+                        while(rowSpot != CurrentRowLength){
+                            let pos = rowBeingChecked[rowSpot]
+                            console.log(`(Position Being Added Back) pos${rowSpot+1}: ${pos}`)
+                            canvas.cordsProperties[pos] ={
+                                Color: canvas.blockcolor,
+                                isFull: false,
+                                row: canvas.cordsProperties[pos].row
+                            }
+                            canvas.cord.push(pos)
+                            this.removedcords.splice(this.removedcords.indexOf(pos), 1)
+                            rowSpot++
+                        }
+                        // check for blocks above
                         
-                        if(check.indexOf(false) === -1){
+                        let pos = rowBeingChecked[0]
+                        pos = pos.split(' ')
+                        let posY = Number(pos[1])
+                        let posX = Number(pos[0])
+
+                        console.log(`Position :${rowBeingChecked[0]}    x: ${posX}  y(IMPORTANT THIS MATCHES): ${posY}}`)
+                        // Check each cords and see if they are above the row that was cleared
+                        let removeCordsLength = this.removedcords.length
+                        let removeCordSpot = 0
+                        let CordsNeedMoving = []
+                        while(removeCordSpot != removeCordsLength){
+                            let currentCordPos = this.removedcords[removeCordSpot]
+                            let currentXandY = currentCordPos.split(' ')
+                            let CurrentY = Number(currentXandY[1])
+                            let currentPosIsFull = canvas.cordsProperties[currentCordPos].isFull
+                            console.log(`Checking removed cord: ${currentCordPos} isFull: ${currentPosIsFull}`)
+                            if(currentPosIsFull === true && CurrentY < posY){
+                                console.log(`Position ${currentCordPos} is full adding to array :) `)
+                                CordsNeedMoving.push(currentCordPos)
+
+                            }
+                            else if(currentPosIsFull === false){
+                                console.log(`Position ${currentCordPos} is not full that's not right!!!!`)
+                            }
+                            else if(CurrentY > posY){
+                                console.log(`${currentCordPos} is below the row that was cleared`)
+                            }
+                            else if(CurrentY === posY){
+                                console.log(`WARNING ${currentCordPos} is in the row that was cleared this should not happen!!!!`)
+                            }
+                            removeCordSpot++
+                            // if the position is full 
+                        }
+                        console.log(`These are the pos that will be moved ${CordsNeedMoving}`)
+                        let CordsNeedMovingLength = CordsNeedMoving.length
+                        let CordsNeedMovingSpot = 0
+                        while(CordsNeedMovingSpot != CordsNeedMovingLength){
+                            let currentCordNeedMovingPos = CordsNeedMoving[CordsNeedMovingSpot]
+                            let currentNeedMoveXandY = currentCordNeedMovingPos.split(' ')
+                            let currentNeedMoveX = Number(currentNeedMoveXandY[0])
+                            let currentNeedMoveY = Number(currentNeedMoveXandY[1])
+                            console.log(`position ${currentCordNeedMovingPos} x:${currentNeedMoveX} y: ${currentNeedMoveY}`)
                             
-                            canvas.cordsProperties[`${x} ${y}`] = {
+                            canvas.cordsProperties[currentCordNeedMovingPos] = {
                                 Color: 'gray',
                                 isFull: false,
-                                row: canvas.cordsProperties[`${x} ${y}`].row
+                                row: canvas.cordsProperties[currentCordNeedMovingPos].row
                             }
-                            c.fillStyle = "white"//canvas.cordsProperties[`${x} ${upy}`].Color
-                            canvas.cord.push(`${x} ${y}`)
-                            let height = y
-                            this.removedcords.splice(this.removedcords.indexOf(`${x} ${y}`),1)
-                            c.fillRect(x, y,30,30)
-                            c.fillStyle = "gray"
-                            console.log(this.removedcords)
-                            let i = 0
-                            let len = this.removedcords.length
-                            while(i != len){
-                                let xandy = this.removedcords[i].split(' ')
-                                let x2 = Number(xandy[0])
-                                let y2 = Number(xandy[1])
-                                if (height > y2){
-                                    c.fillStyle = 'purple'
-                                    canvas.cordsProperties[`${x2} ${y2}`] = {
-                                        
-                                    }
-                                    
-                                }
-                                else if(height < y2){
-                                    c.fillStyle = 'green'
-                                }
-                                c.fillRect(x2,y2,30,30)
-                                i++
+                            canvas.cord.push(currentCordNeedMovingPos)
+                            this.removedcords.splice(this.removedcords.indexOf(currentCordNeedMovingPos),1)
+                            let currentNeedMoveYBelow = currentNeedMoveY+31
+                            let currentCordNeedMovingPosBelow = `${currentNeedMoveX} ${currentNeedMoveYBelow}`
+                            console.log(`position Below: ${currentCordNeedMovingPosBelow} x:${currentNeedMoveX} y:${currentNeedMoveYBelow}`)
+                            canvas.cordsProperties[currentCordNeedMovingPosBelow] = {
+                                Color: canvas.blockcolor,
+                                isFull: true,
+                                row: canvas.cordsProperties[currentCordNeedMovingPosBelow].row
                             }
-                        }               
-                        b++
+                            canvas.cord.splice(canvas.cord.indexOf(currentCordNeedMovingPosBelow),1)
+                            this.removedcords.push(currentCordNeedMovingPosBelow)
+                            CordsNeedMovingSpot++
+                        }
                     }
+                    spot++
                 }
-                q--
-                rowisfulllist = ['']
-                check = []
             }
         }
     }
