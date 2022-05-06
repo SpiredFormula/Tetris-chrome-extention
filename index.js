@@ -56,28 +56,17 @@ class Canvas {
             collums++
         }
     }
-    Render = (block, x, y, orientation, pushToNextRotation) => {
+    Render = (block, x, y, orientation) => {
         var c = this.canvas.getContext('2d')
         var check = 0
         var tempY = y
         var tempX = x
-        if(pushToNextRotation === false){
         this.BlockPos.push(`${x} ${y}`)
         this.NextblockposY.push(`${x} ${y + 31}`)
         this.NextblockposXr.push(`${x +31} ${y+31}`)
         this.NextblockposXl.push(`${x -31} ${y+31}`)
-        }
-        else if(pushToNextRotation === true){
-            this.NextRotationPos.push(`${x} ${y}`)
-            orientation = orientation.split('')
-            let orientationNum = Number[orientation[1]]
-            if (orientationNum >= 4){
-                orientation = 'r1'
-            }
-            else if (orientationNum < 4){
-                orientation = `r${orientationNum + 1}`
-            }
-        }
+        
+
         
 
         //render functions
@@ -88,16 +77,14 @@ class Canvas {
                     y = tempY
                 }
                 check++
-                if(pushToNextRotation === false){
-                    this.BlockPos.push(`${x} ${tempY}`)
-                    this.NextblockposY.push(`${x} ${tempY + 31}`)
-                    this.NextblockposXr.push(`${x+31} ${tempY+31}`)
-                    this.NextblockposXl.push(`${x-31} ${tempY+31}`)
-                    c.fillRect(x, tempY, 30, 30)
-                }
-                else if(pushToNextRotation === true){
-                    this.NextRotationPos.push(`${x} ${tempY}`)
-                }
+                
+                this.BlockPos.push(`${x} ${tempY}`)
+                this.NextblockposY.push(`${x} ${tempY + 31}`)
+                this.NextblockposXr.push(`${x+31} ${tempY+31}`)
+                this.NextblockposXl.push(`${x-31} ${tempY+31}`)
+                c.fillRect(x, tempY, 30, 30)
+                
+
             }
             tempY = y
             check = 0
@@ -110,16 +97,13 @@ class Canvas {
                 }
                
                 check++
-                if(pushToNextRotation === false){
-                    c.fillRect(tempX, y, 30, 30)
-                    this.BlockPos.push(`${tempX} ${y}`)
-                    this.NextblockposY.push(`${tempX} ${y + 31}`)
-                    this.NextblockposXr.push(`${tempX+31} ${y+31}`)
-                    this.NextblockposXl.push(`${tempX-31} ${y+31}`)
-                }
-                else if(pushToNextRotation === true){
-                    this.NextRotationPos.push(`${tempX} ${y}`)
-                }
+                
+                c.fillRect(tempX, y, 30, 30)
+                this.BlockPos.push(`${tempX} ${y}`)
+                this.NextblockposY.push(`${tempX} ${y + 31}`)
+                this.NextblockposXr.push(`${tempX+31} ${y+31}`)
+                this.NextblockposXl.push(`${tempX-31} ${y+31}`)
+                
             }
             tempX = x
             check = 0
@@ -132,16 +116,13 @@ class Canvas {
                 }
                 
                 check++
-                if(pushToNextRotation === false){
-                    c.fillRect(tempX, y, 30, 30)
-                    this.BlockPos.push(`${tempX} ${y}`)
-                    this.NextblockposY.push(`${tempX} ${y + 31}`)
-                    this.NextblockposXr.push(`${tempX+31} ${y+31}`)
-                    this.NextblockposXl.push(`${tempX-31} ${y+31}`)
-                }
-                else if(pushToNextRotation === true){
-                    this.NextRotationPos.push(`${tempX} ${y}`)
-                }
+                
+                c.fillRect(tempX, y, 30, 30)
+                this.BlockPos.push(`${tempX} ${y}`)
+                this.NextblockposY.push(`${tempX} ${y + 31}`)
+                this.NextblockposXr.push(`${tempX+31} ${y+31}`)
+                this.NextblockposXl.push(`${tempX-31} ${y+31}`)
+                
             }
             tempX = x
             check = 0
@@ -154,16 +135,13 @@ class Canvas {
                 }
                 
                 check++
-                if (pushToNextRotation === false){
-                    c.fillRect(x, tempY, 30, 30)
-                    this.BlockPos.push(`${x} ${tempY}`)
-                    this.NextblockposY.push(`${x} ${tempY + 31}`)
-                    this.NextblockposXr.push(`${x+31} ${tempY+31}`)
-                    this.NextblockposXl.push(`${x-31} ${tempY+31}`)
-                }
-                else if(pushToNextRotation === true){
-                    this.NextRotationPos.push(`${x} ${tempY}`)
-                }
+                
+                c.fillRect(x, tempY, 30, 30)
+                this.BlockPos.push(`${x} ${tempY}`)
+                this.NextblockposY.push(`${x} ${tempY + 31}`)
+                this.NextblockposXr.push(`${x+31} ${tempY+31}`)
+                this.NextblockposXl.push(`${x-31} ${tempY+31}`)
+                
             }
             tempY = y
             check = 0
@@ -315,11 +293,8 @@ class Canvas {
                 if (this.cord.includes(`${x} ${y}`)) {
                     c.fillRect(x, y, 30, 30)
                     c.fillStyle = 'gray'
-                }
-                else {
-                 c.fillStyle = 'white'
-                    c.fillRect(x, y, 30, 30)
-                    c.fillStyle = 'gray'
+                    
+
                 }
                 x = x + 31
                 rows++
@@ -350,8 +325,7 @@ class Canvas {
         this.nextblock = this.blocks[randomNum]
         let x = 373
         let y = 94
-        this.Render(this.nextblock, x, y, 'r2', false)
-        this.Render(this.nextblock, x, y, 'r2', true)
+        this.Render(this.nextblock, x, y, 'r2')
     }
     CurrentBlock = () => {
         let c = this.canvas.getContext('2d')
@@ -363,8 +337,8 @@ class Canvas {
         c.font = "10px Arial"
         let x = 373
         let y = 394
-        this.Render(this.currentblock, x, y, 'r2', false)
-        this.Render(this.currentblock, x, y, 'r2', true)
+        this.Render(this.currentblock, x, y, 'r2')
+
     }
 }
 
@@ -403,34 +377,29 @@ class Game {
             checkListL.push(canvas.cord.includes(canvas.NextblockposXl[i]))
             i++
         }
-
-        while(ii != len2){
-            checkListRo.push(canvas.cord.includes(canvas.NextRotationPos[ii]))
-            console.log(checkListRo)
-            ii++
-        }
         //console.log(checkListR, checkListL)
          if (direction === "left" && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
             canvas.RefreshCanvas()
-            canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation, false)
-            canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation, true)
+            canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation)
             console.log(canvas.BlockPos)
             this.x = this.x - 31
         }
         else if(direction === "right" && checkListR.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
             canvas.RefreshCanvas()
-            canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation, false)
-            canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation, true)
+            canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation)
             console.log(canvas.BlockPos)
             this.x = this.x + 31
         }
-        else if(direction === 'r' && checkListRo.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true){
+        else if(direction === 'r'  && checkListR.includes(false) != true && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true){
             this.numR = this.numR+1
             if (this.numR > 4){
                 this.numR = 1
             }
             this.rotation = `r${this.numR.toString()}`
             
+        }
+        else if(direction === 'r'){
+            this.speed === 100
         }
         this.canmove = true
     }
@@ -440,10 +409,17 @@ class Game {
         const delay = ms => new Promise(res => setTimeout(res, ms));
         let gameStarted = true
         let spawn = false
-        canvas.Render(block, this.x, this.y, this.rotation, false)
-        canvas.Render(block, this.x, this.y, this.rotation, true)
+        canvas.Render(block, this.x, this.y, this.rotation)
         while (gameStarted === true) {
-            console.log(`REMOVED: ${this.removedcords}`)
+            let removedPosSpot = 0
+            let removedLength = this.removedcords.length
+            let remcord = []
+            while(removedPosSpot != removedLength){
+                remcord.push(`Cord: ${this.removedcords[removedPosSpot]} IsFull: ${canvas.cordsProperties[this.removedcords[removedPosSpot]].isFull}`)
+                removedPosSpot++
+            }
+            console.log(`REMOVED: ${remcord}`)
+            
             block = canvas.currentblock
             this.canmove = true
             let remlen = this.rembermovements.length
@@ -457,12 +433,12 @@ class Game {
                 }
             }
             await delay(this.speed)
+            this.speed = 200
             this.canmove = false
 
             canvas.RefreshCanvas()
             if (spawn = true) {
-                canvas.Render(block, this.x, this.y, this.rotation, false)
-                canvas.Render(block, this.x, this.y, this.rotation, true)
+                canvas.Render(block, this.x, this.y, this.rotation)
                 spawn = false
             }
 
@@ -475,8 +451,7 @@ class Game {
             }
             if (this.checkList.includes(false) != true) {
                 canvas.RefreshCanvas()
-                canvas.Render(block, this.x, this.y, this.rotation, false)
-                canvas.Render(block, this.x, this.y, this.rotation, true)
+                canvas.Render(block, this.x, this.y, this.rotation)
                 this.y = this.y + 31
                 this.x = this.x
             }
@@ -496,7 +471,8 @@ class Game {
                         isFull: true,
                         row: rowofcord
                     }
-                    this.removedcords.push(canvas.BlockPos[v])
+                    console.log(`---------${cordinate}: ${canvas.cordsProperties[cordinate].isFull} ----------`)
+                    this.removedcords.push(cordinate)
                     canvas.cord.splice(numberofcord, 1)
                     v++
                 }
@@ -523,7 +499,7 @@ class Game {
                     }
                     // If the row is full 
                     if(checkingForFill.indexOf(false) === -1){
-                        console.log('ROW FULL')
+                        console.log('---------------------------- ROW FULL ----------------------------------------------------------')
                        // removes the row
                         let CurrentRowLength = rowBeingChecked.length
                         let rowSpot = 0
@@ -551,6 +527,7 @@ class Game {
                         let removeCordsLength = this.removedcords.length
                         let removeCordSpot = 0
                         let CordsNeedMoving = []
+                        let CordsThatAreBelow = []
                         while(removeCordSpot != removeCordsLength){
                             let currentCordPos = this.removedcords[removeCordSpot]
                             let currentXandY = currentCordPos.split(' ')
@@ -563,18 +540,20 @@ class Game {
 
                             }
                             else if(currentPosIsFull === false){
-                                console.log(`Position ${currentCordPos} is not full that's not right!!!!`)
+                                console.log(`Position ${currentCordPos} is not full that's not right!!!! ************************************************`)
                             }
                             else if(CurrentY > posY){
                                 console.log(`${currentCordPos} is below the row that was cleared`)
+                                CordsThatAreBelow.push(currentCordPos)
                             }
                             else if(CurrentY === posY){
-                                console.log(`WARNING ${currentCordPos} is in the row that was cleared this should not happen!!!!`)
+                                console.log(`WARNING ${currentCordPos} is in the row that was cleared this should not happen!!!! *****************************************`)
                             }
                             removeCordSpot++
                             // if the position is full 
                         }
                         console.log(`These are the pos that will be moved ${CordsNeedMoving}`)
+                        console.log(`THESE ARE BELOW THE ROW : ${CordsThatAreBelow}`)
                         let CordsNeedMovingLength = CordsNeedMoving.length
                         let CordsNeedMovingSpot = 0
                         while(CordsNeedMovingSpot != CordsNeedMovingLength){
@@ -582,29 +561,45 @@ class Game {
                             let currentNeedMoveXandY = currentCordNeedMovingPos.split(' ')
                             let currentNeedMoveX = Number(currentNeedMoveXandY[0])
                             let currentNeedMoveY = Number(currentNeedMoveXandY[1])
+                            let c = canvas.canvas.getContext("2d")
+                            c.fillStyle ='purple'
+                            c.fillRect(currentNeedMoveX, currentNeedMoveY, 30,30)
                             console.log(`position ${currentCordNeedMovingPos} x:${currentNeedMoveX} y: ${currentNeedMoveY}`)
                             
-                            canvas.cordsProperties[currentCordNeedMovingPos] = {
+                            canvas.cordsProperties[`${currentNeedMoveX} ${currentNeedMoveY}`] = {
                                 Color: 'gray',
                                 isFull: false,
-                                row: canvas.cordsProperties[currentCordNeedMovingPos].row
+                                row: canvas.cordsProperties[`${currentNeedMoveX} ${currentNeedMoveY}`].row
                             }
-                            canvas.cord.push(currentCordNeedMovingPos)
-                            this.removedcords.splice(this.removedcords.indexOf(currentCordNeedMovingPos),1)
-                            let currentNeedMoveYBelow = currentNeedMoveY+31
-                            let currentCordNeedMovingPosBelow = `${currentNeedMoveX} ${currentNeedMoveYBelow}`
-                            console.log(`position Below: ${currentCordNeedMovingPosBelow} x:${currentNeedMoveX} y:${currentNeedMoveYBelow}`)
-                            canvas.cordsProperties[currentCordNeedMovingPosBelow] = {
-                                Color: canvas.blockcolor,
-                                isFull: true,
-                                row: canvas.cordsProperties[currentCordNeedMovingPosBelow].row
-                            }
-                            canvas.cord.splice(canvas.cord.indexOf(currentCordNeedMovingPosBelow),1)
-                            this.removedcords.push(currentCordNeedMovingPosBelow)
+                            canvas.cord.push(`${currentNeedMoveX} ${currentNeedMoveY}`)
+                            this.removedcords.splice(this.removedcords.indexOf(`${currentNeedMoveX} ${currentNeedMoveY}`),1)
                             CordsNeedMovingSpot++
                         }
+                        CordsNeedMovingLength = CordsNeedMoving.length  
+                        CordsNeedMovingSpot = 0
+                        while(CordsNeedMovingSpot != CordsNeedMovingLength){
+                            console.log(CordsNeedMovingSpot, CordsNeedMovingLength)
+                            let currentCord = CordsNeedMoving[CordsNeedMovingSpot]
+                            let currentcordxandy = currentCord.split(' ')
+                            let x = Number(currentcordxandy[0])
+                            let y = Number(currentcordxandy[1])
+                            let c = canvas.canvas.getContext("2d")
+                            c.fillStyle = "blue"
+                            c.fillRect(x,y+31,30,30)
+                            y = y+31
+                            canvas.cordsProperties[`${x} ${y}`] = {
+                                Color: canvas.blockcolor,
+                                isFull: true,
+                                row: canvas.cordsProperties[`${x} ${y}`].row
+                            }
+                            canvas.cord.splice(canvas.cord.indexOf(`${x} ${y}`),1)
+                            this.removedcords.push(`${x} ${y}`)
+                            CordsNeedMovingSpot++
+                        }
+                        console.log("----------------------------------------------------------------------------------")
                     }
                     spot++
+                    
                 }
             }
         }
