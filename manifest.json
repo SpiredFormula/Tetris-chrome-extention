@@ -1,0 +1,9 @@
+{
+    "name": "Tetris",
+    "description": "Tetris chrome extension",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+      "default_popup": "index.html"
+    }
+  }
