@@ -1,13 +1,25 @@
+@font-face {
+  font-family: Tetris-Font;
+  src: url("Fonts/PressStart2P-Regular.ttf");
+}
 * {
   margin: 0;
+  font-family: Tetris-Font;
 }
 body {
   margin: 0;
-  background-color: black;
+  background-color: gray;
+  font-family: Tetris-Font;
 }
 canvas {
-  background-color: black;
-  height: 500px;
-  width: 400px;
+  background-color: rgb(10, 10, 10);
+  height: 540px;
+  width: 380px;
   margin: 0;
+  border: solid 5px gray;
+}
+div {
+  font-family: Tetris-Font;
+  size: 10px;
+  color: black;
 }

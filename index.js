@@ -15,14 +15,16 @@ class Canvas {
         this.NextRotationPos = []
         this.rowname  = `row`
         this.score = 0
+        this.uiColour = "gray"
     }
     drawCanvas = () => {
         this.canvas.width = 498
         this.canvas.height = 745
         let c = this.canvas.getContext('2d')
-        c.fillStyle = 'black'
-        c.fillRect(1,1,310,124)
-        c.fillStyle = "gray"
+        c.fillStyle = this.uiColour
+        c.fillRect(0,0,310,125)
+        c.fillStyle = "black"
+        c.font = "20px Tetris-Font"
         let rows = 0
         let collums = 0
         let x = 1
@@ -39,12 +41,12 @@ class Canvas {
                 cords.push(`${x} ${y}`)
                 
                 this.cordsProperties[`${x} ${y}`] ={
-                    Color: "gray",
+                    Color: "black",
                     isFull: false,
                     row: this.rowname
                 }
                 this.cord.push(`${x} ${y}`)
-                c.fillStyle = 'gray'
+                c.fillStyle = 'black'
                 x = x + 31
                 rows++
             }
@@ -59,8 +61,8 @@ class Canvas {
             collums++
         }
         c = canvas.canvas.getContext('2d')
-        c.fillStyle = 'black'
-        c.fillRect(1,1,310,124)
+        c.fillStyle = this.uiColour
+        c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
 
         
     }
@@ -300,7 +302,7 @@ class Canvas {
             while (rows != numRows) {
                 if (this.cord.includes(`${x} ${y}`)) {
                     c.fillRect(x, y, 30, 30)
-                    c.fillStyle = 'gray'
+                    c.fillStyle = 'black'
                     
 
                 }
@@ -320,15 +322,16 @@ class Canvas {
         this.NextblockposXl = []
         this.NextblockposXr = []
         this.NextRotationPos = []
-        c.fillStyle = 'black'
-        c.fillRect(1,1,311,124)
+        c.fillStyle = this.uiColour
+        c.fillRect(0,0,311,125) // ui--------------------------------------------------------------
     }
 
     NextBlock = () => {
         let c = this.canvas.getContext('2d')
-        c.fillStyle = "black"
-        c.fillRect(311, 1, 186, 186)
-        c.font = "30px Arial"
+        console.log("---------------font change---------------------")
+        c.font = "15px Tetris-Font"
+        c.fillStyle = this.uiColour
+        c.fillRect(311, 0, 187, 187) // ui--------------------------------------------------------------
         c.fillStyle = "white"
         c.fillText("Next block", 315, 30)
         let randomNum = Math.floor(Math.random() * this.blocks.length)
@@ -340,17 +343,18 @@ class Canvas {
     }
     CurrentBlock = () => {
         let c = this.canvas.getContext('2d')
-        c.fillStyle = "black"
-        c.fillRect(311, 188, 186, 186)
+        "---------------font change---------------------"
+        c.font = "14px Tetris-Font"
+        c.fillStyle = this.uiColour
+        c.fillRect(311, 187, 187, 187) // ui--------------------------------------------------------------
+        c.fillRect(311, 374, 187, 400) // ui--------------------------------------------------------------
         c.fillStyle = "white"
-        c.font = "30px Arial"
+        
         c.fillText("Current block", 315, 210)
-        c.font = "10px Arial"
         let x = 403
         let y = 280
         this.Render(this.currentblock, x, y, 'r2')
-        c.font = "30px Arial"
-        c.fillStyle = "white"
+        c.font = "15px Tetris-Font"
         
         
         
@@ -358,7 +362,7 @@ class Canvas {
     }
 }
 
-const canvas = new Canvas();
+var canvas = new Canvas();
 let randomNum = Math.floor(Math.random() * canvas.blocks.length)
 
 canvas.currentblock = canvas.blocks[randomNum]
@@ -375,6 +379,7 @@ class Game {
         this.checkList = []
         this.removedcords = []
         this.wait = 0
+        this.restart = true
         
     }
     Move = async (direction) => {
@@ -396,17 +401,28 @@ class Game {
         //console.log(checkListR, checkListL)
          if (direction === "left" && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
             canvas.RefreshCanvas()
+            let c = canvas.canvas.getContext('2d')
+            c.fillStyle = canvas.uiColour
+            c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
             canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation)
+            c.fillStyle = canvas.uiColour
+            c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
             console.log(canvas.BlockPos)
             this.x = this.x - 31
             this.wait = 0
         }
         else if(direction === "right" && checkListR.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true) {
             canvas.RefreshCanvas()
+            let c = canvas.canvas.getContext('2d')
+            c.fillStyle = canvas.uiColour
+            c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
             canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation)
+            c.fillStyle = canvas.uiColour
+            c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
             console.log(canvas.BlockPos)
             this.x = this.x + 31
             this.wait = 0
+            
         }
         else if(direction === 'r'  && checkListR.includes(false) != true && checkListL.includes(false) != true && this.canmove === true && this.checkList.includes(false) != true){
             this.numR = this.numR+1
@@ -418,7 +434,7 @@ class Game {
             
         }
         else if(direction === 'down'){
-            const time = ms => new Promise(res => setTimeout(res, ms))
+            
             this.speed = 50
             this.wait = 0
 
@@ -484,8 +500,8 @@ class Game {
                 this.y = this.y + 31
                 this.x = this.x
                 let c = canvas.canvas.getContext('2d')
-                c.fillStyle = 'black'
-                c.fillRect(1,1,310,124)
+                c.fillStyle = canvas.uiColour
+                c.fillRect(0,0,310,125)// ui--------------------------------------------------------------
             }
             // making blocks stop
             if (this.checkList.includes(false) === true) {
@@ -504,7 +520,13 @@ class Game {
                 }
                 if(check.includes(true)){
                     gameStarted = false
+                    let c = canvas.canvas.getContext('2d')
+                    c.fillStyle = canvas.uiColour
+                    
+                    c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
+                    restartGame()
                 }
+
 
                 spawn = true
                 let z = canvas.BlockPos.length
@@ -665,19 +687,21 @@ class Game {
                 }
                 let c = canvas.canvas.getContext('2d')
                 c.fillStyle = 'black'
-                c.fillRect(350,475,50,50)
+                c.fillRect(320,475,100,50)
                 c.fillStyle = 'white'
-                c.fillText(`${canvas.score}`, 350, 500)
+                c.font = "20px Tetris-Font"
+                c.fillText(`${canvas.score}`, 325, 510)
                 console.log("----------------------------------------------------------------------------------")
             }
         }
+        
+        
     }
 }
-const game = new Game()
+var game = new Game()
 game.rotation = 'r1'
-canvas.drawCanvas()
-canvas.NextBlock()
-canvas.CurrentBlock()
+
+
 document.addEventListener("keydown", function (event) {
     if (event.keyCode === 37 ) {
         game.Move("left")
@@ -693,4 +717,36 @@ document.addEventListener("keydown", function (event) {
     }
     
 })
-game.Update()
+
+LoadDelay = async () => {
+    const time = ms => new Promise(res => setTimeout(res, ms))
+    await time(500)
+    
+    canvas.drawCanvas()
+    let randomNum = Math.floor(Math.random() * canvas.blocks.length)
+    canvas.currentblock = canvas.blocks[randomNum]
+    canvas.NextBlock()
+    canvas.CurrentBlock()
+    
+    let c = canvas.canvas.getContext('2d')
+    c.fillStyle = 'black'
+    c.fillRect(320,475,100,50)
+    c.fillStyle = 'white'
+    c.font = "20px Tetris-Font"
+    c.fillText(`${canvas.score}`, 325, 510)
+    game.Update()
+}
+
+restartGame = () =>{
+    canvas = new Canvas()
+
+
+    game = new Game()
+    game.rotation = 'r1'
+    LoadDelay();
+}
+LoadDelay();
+
+
+
+
