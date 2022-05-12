@@ -7,6 +7,13 @@
     "background":{
     },
     "action": {
-      "default_popup": "index.html"
+      "default_popup": "index.html",
+      "default_icon": {
+        "16": "./Images/extensionIcon.png",
+        "32": "./Images/extensionIcon.png",
+        "48": "./Images/extensionIcon.png",
+        "128":"./Images/extensionIcon.png"
+      }
     }
+
   }
