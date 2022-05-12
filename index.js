@@ -22,7 +22,7 @@ class Canvas {
         this.canvas.height = 745
         let c = this.canvas.getContext('2d')
         c.fillStyle = this.uiColour
-        c.fillRect(0,0,310,125)
+        c.fillRect(0,0,311,125)
         c.fillStyle = "black"
         c.font = "20px Tetris-Font"
         let rows = 0
@@ -36,7 +36,9 @@ class Canvas {
         this.rowname  = `${rownum}`
         while (collums != numCollums) {
             while (rows != numRows) {
-
+                c.fillStyle = this.uiColour
+                c.fillRect(0,0,311,125)
+                c.fillStyle = 'black'
                 c.fillRect(x, y, 30, 30)
                 cords.push(`${x} ${y}`)
                 
@@ -62,7 +64,7 @@ class Canvas {
         }
         c = canvas.canvas.getContext('2d')
         c.fillStyle = this.uiColour
-        c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
+        c.fillRect(0,0,311,125) // ui--------------------------------------------------------------
 
         
     }
@@ -390,7 +392,7 @@ class Game {
         
         if(this.canmove === false){
             this.rembermovements.push(direction)
-            console.log(this.rembermovements)
+            
         }
         
         while (i != len) {
@@ -407,7 +409,7 @@ class Game {
             canvas.Render(canvas.currentblock, this.x-31, this.y, this.rotation)
             c.fillStyle = canvas.uiColour
             c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
-            console.log(canvas.BlockPos)
+           
             this.x = this.x - 31
             this.wait = 0
         }
@@ -419,7 +421,7 @@ class Game {
             canvas.Render(canvas.currentblock, this.x + 31, this.y, this.rotation)
             c.fillStyle = canvas.uiColour
             c.fillRect(0,0,310,125) // ui--------------------------------------------------------------
-            console.log(canvas.BlockPos)
+           
             this.x = this.x + 31
             this.wait = 0
             
@@ -438,7 +440,7 @@ class Game {
             this.speed = 50
             this.wait = 0
 
-            console.log('down')
+    
         }
         this.canmove = true
     }
@@ -457,7 +459,7 @@ class Game {
                 remcord.push(`Cord: ${this.removedcords[removedPosSpot]} IsFull: ${canvas.cordsProperties[this.removedcords[removedPosSpot]].isFull}`)
                 removedPosSpot++
             }
-            console.log(`REMOVED: ${remcord}`)
+         
             
             block = canvas.currentblock
             this.canmove = true
@@ -472,8 +474,6 @@ class Game {
                 }
             }
             await delay(this.speed)
-            console.log(this.wait)
-            console.log(this.speed)
             if(this.wait >= 1){
                 this.speed = 200
             }
@@ -514,7 +514,7 @@ class Game {
                     
                     check.push(canvas.cordsProperties[`${xpos} 125`].isFull)
                     xpos = xpos+31
-                    console.log(check)
+                    
                     
                     iii++
                 }
@@ -570,7 +570,7 @@ class Game {
                     }
                     // If the row is full 
                     if(checkingForFill.indexOf(false) === -1){
-                        console.log('---------------------------- ROW FULL ----------------------------------------------------------')
+                        
                         rowscleared++
                         // removes the row
                         let CurrentRowLength = rowBeingChecked.length
@@ -615,7 +615,7 @@ class Game {
                                 console.log(`Position ${currentCordPos} is not full that's not right!!!! ************************************************`)
                             }
                             else if(CurrentY > posY){
-                                console.log(`${currentCordPos} is below the row that was cleared`)
+                                //console.log(`${currentCordPos} is below the row that was cleared`)
                                 CordsThatAreBelow.push(currentCordPos)
                             }
                             else if(CurrentY === posY){
@@ -624,8 +624,7 @@ class Game {
                             removeCordSpot++
                             // if the position is full 
                         }
-                        console.log(`These are the pos that will be moved ${CordsNeedMoving}`)
-                        console.log(`THESE ARE BELOW THE ROW : ${CordsThatAreBelow}`)
+                    
                         let CordsNeedMovingLength = CordsNeedMoving.length
                         let CordsNeedMovingSpot = 0
                         while(CordsNeedMovingSpot != CordsNeedMovingLength){
@@ -636,8 +635,7 @@ class Game {
                             let c = canvas.canvas.getContext("2d")
                             c.fillStyle ='purple'
                             c.fillRect(currentNeedMoveX, currentNeedMoveY, 30,30)
-                            console.log(`position ${currentCordNeedMovingPos} x:${currentNeedMoveX} y: ${currentNeedMoveY}`)
-                            
+                                                        
                             canvas.cordsProperties[`${currentNeedMoveX} ${currentNeedMoveY}`] = {
                                 Color: 'gray',
                                 isFull: false,
@@ -650,7 +648,7 @@ class Game {
                         CordsNeedMovingLength = CordsNeedMoving.length  
                         CordsNeedMovingSpot = 0
                         while(CordsNeedMovingSpot != CordsNeedMovingLength){
-                            console.log(CordsNeedMovingSpot, CordsNeedMovingLength)
+                            
                             let currentCord = CordsNeedMoving[CordsNeedMovingSpot]
                             let currentcordxandy = currentCord.split(' ')
                             let x = Number(currentcordxandy[0])
@@ -691,14 +689,19 @@ class Game {
                 c.fillStyle = 'white'
                 c.font = "20px Tetris-Font"
                 c.fillText(`${canvas.score}`, 325, 510)
-                console.log("----------------------------------------------------------------------------------")
+
             }
+            // chrome.storage.local.set({PlayerScore: canvas.score}, function() {
+            //     console.log(`Player score is ${canvas.score}`);
+            // });
         }
         
         
     }
 }
+
 var game = new Game()
+
 game.rotation = 'r1'
 
 
@@ -721,7 +724,10 @@ document.addEventListener("keydown", function (event) {
 LoadDelay = async () => {
     const time = ms => new Promise(res => setTimeout(res, ms))
     await time(500)
-    
+    // chrome.storage.local.get(['PlayerScore'], function(result) {
+    //     console.log('Value currently is ' + result.PlayerScore);
+    //     canvas.score = Number(`${result.PlayerScore}`)
+    // });
     canvas.drawCanvas()
     let randomNum = Math.floor(Math.random() * canvas.blocks.length)
     canvas.currentblock = canvas.blocks[randomNum]
@@ -739,14 +745,31 @@ LoadDelay = async () => {
 
 restartGame = () =>{
     canvas = new Canvas()
-
+    canvas.score = 0
+    chrome.storage.local.set({PlayerScore: canvas.score}, function() {
+        console.log(`Player score is ${canvas.score}`);
+    });
 
     game = new Game()
     game.rotation = 'r1'
     LoadDelay();
 }
+
 LoadDelay();
 
 
+let check = () =>{
+    chrome.storage.local.get(['PlayerScore'], function(result) {
+        console.log('Value currently is ' + result.PlayerScore);
+    });
+}
 
+let clear = () =>{
+chrome.storage.local.clear(function() {
+    var error = chrome.runtime.lastError;
+    if (error) {
+        console.error(error);
+    }
 
+});
+}
