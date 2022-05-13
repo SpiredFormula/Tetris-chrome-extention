@@ -12,5 +12,5 @@
 
 1. go to https://github.com/SpiredFormula/Tetris-vanilia-js/releases and install the latest version
 2. Go to your downloads folder and find the zip file
-https://github.com/SpiredFormula/Tetris-vanilia-js/blob/main/Images/READMEImages/Tute1.PNG
+https://github.com/SpiredFormula/Tetris-vanilia-js/blob/main/Images/READMEImages/Tute1.PNG?raw=true
 
