@@ -4,10 +4,13 @@
 
 > also don't judge the messy code i really was just doing this in my spare time i did not plan it at all
 
-# How it works
+# What is Chrome Tetris
 
-....
+
 
 # How to install
 
-....
+1. go to https://github.com/SpiredFormula/Tetris-vanilia-js/releases and install the latest version
+2. Go to your downloads folder and find the zip file
+![alt text](https://github.com/[SpiredFormula]/[Tetris-vanilia-js]/Images/READMEImages/[main]/Tute1.png?raw=true)
+
