@@ -1,3 +1,5 @@
+Lmao rember making this it has very bad code have no idea how it works now the code is auful and unreadable good luck trying to undersand how this works also why did I put so much effort into the readme file not one is going to download this
+
 # Tetris-vanilia-js
 
 ### By SpiredFormula
